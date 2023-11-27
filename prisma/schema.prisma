@@ -1,0 +1,27 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"  // or another database provider
+  url      = "postgresql://admin:pass123@fcl_web_db:5432/fclweb?schema=public"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Batch {
+  id            Int       @id @default(autoincrement())
+  model         String
+  date          DateTime
+  quantity      Int
+  licenseLevel  Int
+  comment       String?
+  machines      Machine[]
+}
+
+model Machine {
+  id            Int      @id @default(autoincrement())
+  batch         Batch    @relation(fields: [batchId], references: [id])
+  batchId       Int
+  serialNumber  String   @default(uuid())
+}

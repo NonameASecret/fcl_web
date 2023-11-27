@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  web:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fcl_web
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - db
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm start"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  db:
+    tty: true
+    image: postgres:latest
+    container_name: fcl_web_db
+    ports:
+      - '5432:5432'
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass123
+      POSTGRES_DB: fclweb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
